@@ -6,7 +6,11 @@ import React from "react";
 import { Title } from "@mantine/core";
 import { List, ListItem } from "@mantine/core";
 import { WeeklyContributions } from "@/app/compatibility/weekly_contributions";
-import { getWeeklyContributions } from "@/app/downloads/github";
+import {
+  fetchReport,
+  getAVM1Progress,
+  getWeeklyContributions,
+} from "@/app/downloads/github";
 
 export default async function Downloads() {
   const contributions = await getWeeklyContributions();
@@ -16,6 +20,19 @@ export default async function Downloads() {
       Commits: item.total,
     };
   });
+  const avm1ApiDone = await getAVM1Progress();
+  const report = await fetchReport();
+  if (!report) {
+    return;
+  }
+  const summary = report.summary;
+  const maxPoints = summary.max_points;
+  const implPoints = summary.impl_points;
+  const stubPenalty = summary.stub_penalty;
+  const avm2ApiDone = Math.round(
+    ((implPoints - stubPenalty) / maxPoints) * 100,
+  );
+  const avm2ApiStubbed = Math.round((stubPenalty / maxPoints) * 100);
 
   return (
     <Container size="xl" className={classes.container}>
@@ -65,7 +82,7 @@ export default async function Downloads() {
           <AvmBlock
             name="AVM 1: ActionScript 1 & 2"
             language={{ done: 95 }}
-            api={{ done: 75 }}
+            api={{ done: avm1ApiDone }}
             info_link_target="_blank"
             info_link="https://github.com/ruffle-rs/ruffle/issues/310"
           >
@@ -86,8 +103,8 @@ export default async function Downloads() {
 
           <AvmBlock
             name="AVM 2: ActionScript 3"
-            language={{ done: 75 }}
-            api={{ done: 68, stubbed: 6 }}
+            language={{ done: 90 }}
+            api={{ done: avm2ApiDone, stubbed: avm2ApiStubbed }}
             info_link="/compatibility/avm2"
           >
             <Text>

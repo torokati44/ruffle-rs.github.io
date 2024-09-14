@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  IconBrandJavascript,
-  IconList,
-  TablerIconsProps,
-} from "@tabler/icons-react";
+import { Icon, IconBrandJavascript, IconList } from "@tabler/icons-react";
 import React from "react";
 import { useDeviceSelectors } from "react-device-detect";
 import classes from "./index.module.css";
@@ -13,7 +9,7 @@ import Link from "next/link";
 import { allLinks, CurrentDevice, GithubRelease } from "@/app/downloads/config";
 
 interface RecommendedDownload {
-  icon: (props: TablerIconsProps) => React.JSX.Element;
+  icon: React.ExoticComponent<React.RefAttributes<Icon>>;
   name: string;
   url: string;
   className?: string;

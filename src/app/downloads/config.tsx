@@ -1,4 +1,6 @@
 import {
+  Icon,
+  IconBox,
   IconBrandApple,
   IconBrandChrome,
   IconBrandEdge,
@@ -6,10 +8,10 @@ import {
   IconBrandJavascript,
   IconBrandSafari,
   IconBrandWindows,
-  TablerIconsProps,
 } from "@tabler/icons-react";
 import React from "react";
 import { IconBrandLinux } from "@/components/icons";
+import { SummaryStatistics } from "@/app/compatibility/avm2/report_utils";
 
 export const repository = { owner: "ruffle-rs", repo: "ruffle" };
 
@@ -17,12 +19,15 @@ export const maxNightlies = 5;
 
 export const githubReleasesUrl = `https://github.com/${repository.owner}/${repository.repo}/releases`;
 
+export const flathubUrl = "https://flathub.org/apps/rs.ruffle.Ruffle";
+
 export interface GithubRelease {
   id: number;
   name: string;
   prerelease: boolean;
   downloads: ReleaseDownloads;
   url: string;
+  avm2_report_asset_id?: number;
 }
 
 export interface ReleaseDownloads {
@@ -30,6 +35,7 @@ export interface ReleaseDownloads {
   windows_32?: string;
   macos?: string;
   linux?: string;
+  flatpak?: string;
 
   firefox?: string;
   chromium?: string;
@@ -39,7 +45,7 @@ export interface ReleaseDownloads {
 
 export type DownloadKey = keyof ReleaseDownloads;
 
-export const FilenamePatterns: Record<DownloadKey, string> = {
+export const FilenamePatterns: Record<DownloadKey, string | null> = {
   windows_64: "-windows-x86_64",
   windows_32: "-windows-x86_32",
   macos: "-macos",
@@ -47,6 +53,7 @@ export const FilenamePatterns: Record<DownloadKey, string> = {
   firefox: "-firefox-unsigned",
   chromium: "-extension.",
   web: "-selfhosted",
+  flatpak: null,
 };
 
 export interface CurrentDevice {
@@ -85,7 +92,7 @@ export interface DownloadLink {
   /**
    * Icon to represent this link
    */
-  icon: (props: TablerIconsProps) => React.JSX.Element;
+  icon: React.ExoticComponent<React.RefAttributes<Icon>>;
 
   /**
    * Whether or not to recommend this link to the given device
@@ -129,6 +136,15 @@ export const desktopLinks: DownloadLink[] = [
     icon: IconBrandApple,
     isRecommended: true,
     isDeviceRelevant: (device) => device.desktop && device.mac,
+  },
+  {
+    key: "flatpak",
+    shortName: "Flatpak",
+    longName: "Flatpak App",
+    icon: IconBox,
+    isRecommended: true,
+    recommendedUrl: flathubUrl,
+    isDeviceRelevant: (device) => device.linux,
   },
   {
     key: "linux",
@@ -197,3 +213,8 @@ export const allLinks: DownloadLink[] = [
   desktopLinks,
   webLinks,
 ].flat();
+
+export interface AVM2Report {
+  summary: SummaryStatistics;
+  classes: object;
+}
