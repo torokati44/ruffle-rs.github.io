@@ -22,34 +22,44 @@ export default function Installers({
   release: GithubRelease | null;
 }) {
   const recommended: RecommendedDownload[] = [];
-  if (typeof window !== "undefined") {
-    // seems like this is sometimes server-rendered, despite "use client" at the top
-    const [selectors] = useDeviceSelectors(window.navigator.userAgent);
-    const currentDevice: CurrentDevice = {
-      windows: selectors.isWindows,
-      mac: selectors.isMacOs,
-      android: selectors.isAndroid,
-      linux: selectors.osName.toLowerCase() == "linux", // https://github.com/duskload/react-device-detect/issues/200
-      ios: selectors.isIOS,
-      firefox: selectors.isFirefox,
-      chrome: selectors.isChrome,
-      edge: selectors.isEdge,
-      safari: selectors.isSafari,
-      desktop: selectors.isDesktop,
-      mobile: selectors.isMobile,
-    };
 
-    for (const link of allLinks) {
-      if (link.isDeviceRelevant(currentDevice)) {
-        const url = link.recommendedUrl || release?.downloads[link.key];
-        if (url) {
-          recommended.push({
-            icon: link.icon,
-            name: link.longName,
-            target: "_blank",
-            url,
-          });
-        }
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    // This effect will run only on the client
+    setIsClient(true);
+  }, []);
+
+  // Only render on the client-side
+  if (!isClient) {
+    return null; // On the server, return null to avoid mismatches
+  }
+
+  const [selectors] = useDeviceSelectors(window.navigator.userAgent);
+  const currentDevice: CurrentDevice = {
+    windows: selectors.isWindows,
+    mac: selectors.isMacOs,
+    android: selectors.isAndroid,
+    linux: selectors.osName.toLowerCase() == "linux", // https://github.com/duskload/react-device-detect/issues/200
+    ios: selectors.isIOS,
+    firefox: selectors.isFirefox,
+    chrome: selectors.isChrome,
+    edge: selectors.isEdge,
+    safari: selectors.isSafari,
+    desktop: selectors.isDesktop,
+    mobile: selectors.isMobile,
+  };
+
+  for (const link of allLinks) {
+    if (link.isDeviceRelevant(currentDevice)) {
+      const url = link.recommendedUrl || release?.downloads[link.key];
+      if (url) {
+        recommended.push({
+          icon: link.icon,
+          name: link.longName,
+          target: "_blank",
+          url,
+        });
       }
     }
   }
