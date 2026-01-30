@@ -1,0 +1,29 @@
+{
+  "nodeModulesDir": "auto",
+  "compilerOptions": {
+    "lib": ["deno.window", "dom", "dom.iterable", "dom.asynciterable"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  },
+  "imports": {
+    "@/": "./src/"
+  },
+  "tasks": {
+    "dev": "deno run --allow-read --allow-env --allow-net --allow-run --allow-write npm:next dev",
+    "build": "deno run --allow-read --allow-env --allow-net --allow-run --allow-write npm:next build",
+    "start": "deno run --allow-read --allow-env --allow-net --allow-run npm:next start",
+    "lint": "deno run --allow-read --allow-env --allow-run npm:eslint .",
+    "check": "deno check **/*.ts **/*.tsx"
+  },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 80,
+    "indentWidth": 2,
+    "semiColons": true,
+    "singleQuote": false,
+    "proseWrap": "preserve"
+  },
+  "lint": {
+    "exclude": ["node_modules", ".next", "out", "build"]
+  }
+}

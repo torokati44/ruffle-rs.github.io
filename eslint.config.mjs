@@ -26,6 +26,7 @@ export default [
     "prettier",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:@next/next/core-web-vitals",
   ),
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
