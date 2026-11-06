@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Script from "next/script";
 import classes from "../app/index.module.css";
@@ -29,15 +29,18 @@ interface LogoProps {
 
 export default function InteractiveLogo({ className }: LogoProps) {
   const container = useRef<HTMLDivElement>(null);
+  // The ref is for callbacks (always current); the state drives rendering.
+  const playerRef = useRef<RufflePlayer | null>(null);
   const [player, setPlayer] = useState<RufflePlayer | null>(null);
 
-  const removeRufflePlayer = () => {
-    player?.remove();
+  const removeRufflePlayer = useCallback(() => {
+    playerRef.current?.remove();
+    playerRef.current = null;
     setPlayer(null);
-  };
+  }, []);
 
   const loadPlayer = () => {
-    if (player) {
+    if (playerRef.current) {
       // Already loaded.
       return;
     }
@@ -64,13 +67,12 @@ export default function InteractiveLogo({ className }: LogoProps) {
         });
       rufflePlayer.style.width = "100%";
       rufflePlayer.style.height = "100%";
+      playerRef.current = rufflePlayer;
       setPlayer(rufflePlayer);
     }
   };
 
-  useEffect(() => {
-    return () => removeRufflePlayer();
-  }, []);
+  useEffect(() => removeRufflePlayer, [removeRufflePlayer]);
 
   return (
     <>
