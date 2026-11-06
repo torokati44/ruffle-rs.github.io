@@ -36,7 +36,7 @@ export default function Home() {
         console.warn("Failed to fetch releases", err);
       }
     };
-    fetchReleases();
+    void fetchReleases();
   }, []);
 
   return (
